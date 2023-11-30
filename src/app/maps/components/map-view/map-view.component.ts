@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { PlacesService } from '../../services';
+import { PlacesService, MapService } from '../../services';
 import { Map, Popup, Marker } from 'mapbox-gl';
 
 
@@ -16,7 +16,8 @@ export class MapViewComponent implements AfterViewInit {
   mapDivElement!: ElementRef
 
   constructor (
-    private placesService: PlacesService
+    private placesService: PlacesService,
+    private mapService: MapService
   ) {}
 
 
@@ -51,6 +52,9 @@ export class MapViewComponent implements AfterViewInit {
       .setLngLat( this.placesService.userLocation )
       .setPopup( popup )
       .addTo( map )
+
+
+    this.mapService.setMap( map )
   }
 
 
