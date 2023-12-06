@@ -48,6 +48,11 @@ export class PlacesService {
   // Método para realizar las peticiones http del buscador
   getPlacesByQuery( query: string = '') {
     // todo: evaluar cuando el query es nulo
+    if ( query.length === 0 ) {
+      this.places = [];
+      this.isLoadingPlaces = false;
+      return;
+    }
 
     // Evaluamos si existe ubicacion o no
     if ( !this.userLocation ) throw Error('No hay userLocation');
@@ -60,7 +65,6 @@ export class PlacesService {
       }
     })
       .subscribe( resp => {
-        console.log(resp.features);
 
         this.isLoadingPlaces = false;
         this.places = resp.features;
