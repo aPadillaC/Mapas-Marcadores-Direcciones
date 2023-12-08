@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { PlacesService } from '../../services';
+import { MapService, PlacesService } from '../../services';
 
 @Component({
   selector: 'app-search-bar',
@@ -11,7 +11,9 @@ export class SearchBarComponent {
   // Variable para el debounce Manual
   private debounceTimer?: NodeJS.Timeout;
 
-  constructor ( private placesService: PlacesService) {  }
+  constructor (
+    private placesService: PlacesService
+  ) {  }
 
 
 
