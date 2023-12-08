@@ -9,7 +9,7 @@ import { MapService } from './map.service';
 })
 export class PlacesService {
 
-  public userLocation: [number, number] | undefined;
+  public userLocation?: [number, number]
 
   // Variables para evitar tener la lógica en los componentes
   public isLoadingPlaces: boolean = false;
@@ -74,7 +74,7 @@ export class PlacesService {
         this.places = resp.features;
 
         // Llamo al método del servicio mapService que realiza la creación de los marcadores
-        this.mapService.createMarkersFromPlaces(this.places)
+        this.mapService.createMarkersFromPlaces(this.places, this.userLocation!)
       });
   }
 

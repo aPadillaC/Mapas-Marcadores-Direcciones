@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LngLatLike, Map, Marker, Popup } from 'mapbox-gl';
+import { LngLatBounds, LngLatLike, Map, Marker, Popup } from 'mapbox-gl';
 import { Feature } from '../interfaces/places';
 
 @Injectable({
@@ -41,7 +41,7 @@ export class MapService {
 
 
   // Metodo para colocar marcadores para los resultados de la busqueda
-  createMarkersFromPlaces( places: Feature[] ) {
+  createMarkersFromPlaces( places: Feature[], userLocation: [number, number] ) {
 
     if (!this.map) throw Error('Mapa no inicializado');
 
@@ -77,6 +77,26 @@ export class MapService {
 
     // Le asignamos a la propiedad de la clase "markers" en nuevo valor correspondiente a los nuevos marcadores
     this.markers = newMarkers;
+
+    // Si no hay marcadores no se ejecuta el resto de codigo
+    if( places.length === 0 ) return;
+
+
+    // todo: Limites del mapa
+
+    // Creo la constante para los limites
+    const bounds = new LngLatBounds()
+
+    // Como en newMarkers tengo todos los resultados, recorro el array y lo paso a "bounds" mediante el metodo extend enviandole como parametro el metodo getLngLat() que contiene la info de las coordenadas
+    newMarkers.forEach( marker => bounds.extend( marker.getLngLat()))
+
+    // Para que mi ubiacion no desaparezca del foco de la pantalla la introduzco tambien en la variable bounds
+    bounds.extend( userLocation );
+
+    // Metiante la propiedad fitBpunds a la propiedad map lo que hacemos es que se encuadre todos los resultados de la busqueda en la pantalla junto a la de mi ubicacion. Con el padding lo unico que hacemos es que los marcadores mas exteriores no queden a ras de la imagen
+    this.map.fitBounds(bounds, {
+      padding: 100
+    })
 
   }
 }
