@@ -12,10 +12,17 @@ export class SearchResultsComponent {
   // Creamos esta propiedad para usarla a la hora de marcarla con la clase active
   public selectedId: string = "";
 
+
+
+
   constructor(
     private placesService: PlacesService,
     private mapService: MapService
   ) {}
+
+
+
+
 
 
   // Obtenemos el valor de isLoadingPlaces del servicio y lo usanmos luego para mostrar el mensaje de loading
@@ -24,11 +31,17 @@ export class SearchResultsComponent {
     return this.placesService.isLoadingPlaces;
   }
 
+
+
+
+
   // Obtenemos los resultados de la busqueda
   get places():Feature[] {
 
     return this.placesService.places;
   }
+
+
 
 
 
@@ -47,4 +60,31 @@ export class SearchResultsComponent {
     this.mapService.flyTo([ lng, lat])
   }
 
+
+
+
+  // ------------------------
+  // Navegacion
+  // -------------------------
+
+
+  // Método para la navegación entre dos puntos
+  getDirections( place: Feature ) {
+
+
+    // Validamos si tenemos ubicación del usuario
+    if (!this.placesService.userLocation) throw Error('No tenemos locacización')
+
+    // Llamamos al metodo del servicio que borra el arreglo de lugares ya que esa es la condición que tiene en el search-results.components.html para mostrarse
+    this.placesService.deletePlaces();
+
+
+    // Coords de inicio y final
+    const start = this.placesService.userLocation;
+    const end = place.center as [number, number]; // lo tipo así porque es como lo he tipado en el servicio
+
+
+    // Llamo al metodo del servicio
+    this.mapService.getRouteBetweenPoints( start, end )
+  }
 }

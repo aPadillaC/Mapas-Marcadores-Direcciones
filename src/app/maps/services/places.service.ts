@@ -78,4 +78,18 @@ export class PlacesService {
       });
   }
 
+
+
+  // --------------------------
+  // Ocultar el menu
+  // --------------------------
+
+
+  // Borro el arreglo de lugares
+  deletePlaces() {
+
+    this.places = [];
+  }
+
+
 }

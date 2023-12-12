@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { LngLatBounds, LngLatLike, Map, Marker, Popup } from 'mapbox-gl';
+import { AnySourceData, LngLatBounds, LngLatLike, Map, Marker, Popup } from 'mapbox-gl';
 import { Feature } from '../interfaces/places';
+import { DirectionsApiClient } from '../api/directionsApiClient';
+import { DirectionsResponse, Route } from '../interfaces/directions';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +13,14 @@ export class MapService {
   private map: Map | undefined;
 
 
+
+
+
   // Creo la variable para mis markers
   private markers: Marker[] =  [];
+
+
+
 
 
   // Metido para validad si hay mapa o no
@@ -21,10 +29,26 @@ export class MapService {
   }
 
 
+
+
+
+
+  // Constructor con la inyecciones necesarias para el funcionamiento del servicio
+  constructor( private directionsApi: DirectionsApiClient) { }
+
+
+
+
+
+
   // Establece el valor de la propiedad privada map
   setMap( map: Map ) {
     this.map = map;
   }
+
+
+
+
 
 
   // Metodo que me permite moverme por el mapa usando el tipo que nos ofrece MapBox LngLatLike
@@ -37,6 +61,10 @@ export class MapService {
       center: coords
     });
   }
+
+
+
+
 
 
 
@@ -99,4 +127,110 @@ export class MapService {
     })
 
   }
+
+
+
+
+
+  // -----------------------------
+  // Métodos para la navegación
+  // ------------------------------
+
+
+
+
+  // Método para la navegación
+  getRouteBetweenPoints( start: [number, number], end: [number, number]) {
+
+    // Usamos el metodo .join(',') para unir lng y lat por una "," por la forma de que Mapbox usa esos valores
+    this.directionsApi.get<DirectionsResponse>(`/${start.join(',')};${end.join(',')}`)
+      .subscribe( resp =>this.drawPolyline( resp.routes[0]) );
+
+  }
+
+
+
+
+
+
+  // Método para obtener la dist y mtrs entre los dos puntos
+  private drawPolyline( route: Route) {
+
+    console.log({kms: route.distance / 1000, duration: route.duration / 60});
+
+
+    // todo: Para que toda la ruta sea el foco de la pantalla
+
+
+    // Se verifica si hay mapa
+    if (! this.map ) throw Error('Mapa no inicializado')
+
+
+    // Creamos la const coords para guardar todos los puntos de la ruta
+    const coords = route.geometry.coordinates;
+
+    // Creamos los bounds
+    const bounds = new LngLatBounds();
+
+    coords.forEach( ([lng, lat]) => {
+
+      bounds.extend( [lng, lat] )
+    });
+
+    this.map.fitBounds(bounds, {
+      padding: 100
+    })
+
+
+
+
+
+    // Definir la Polyline
+    const sourceData: AnySourceData = {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates: coords
+            }
+          }
+        ]
+      }
+    }
+
+
+
+
+    // Todo: limpiar ruta previa
+    if ( this.map.getLayer('RouteString')) {
+      this.map.removeLayer('RouteString');
+      this.map.removeSource('RouteString');
+    }
+
+
+    this.map.addSource('RouteString', sourceData);
+
+    this.map.addLayer({
+      id: 'RouteString',
+      type: 'line',
+      source: 'RouteString',
+      layout: {
+        'line-cap': 'round',
+        'line-join': 'round'
+      },
+      paint: {
+        'line-color': 'black',
+        'line-width': 3
+      }
+    });
+  }
+
+
+
+
 }

@@ -11,11 +11,12 @@
     *ngFor="let place of places"
     class="list-group-item list-group-item-action pointer"
     [class.active]="place.id === selectedId"
+    (click)="flyto(place)"
   >
     <h6>{{place.text_es}}</h6>
     <p>{{ place.place_name }}</p>
     <button
-      (click)="flyto(place)"
+      (click)="getDirections(place)"
       class="btn btn-sm"
       [ngClass]="(place.id === selectedId) ? 'btn-outline-light': 'btn-outline-primary'"
     >
