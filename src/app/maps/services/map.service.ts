@@ -3,6 +3,7 @@ import { AnySourceData, LngLatBounds, LngLatLike, Map, Marker, Popup } from 'map
 import { Feature } from '../interfaces/places';
 import { DirectionsApiClient } from '../api/directionsApiClient';
 import { DirectionsResponse, Route } from '../interfaces/directions';
+import { InfoNavigation } from '../interfaces/infoNavigation';
 
 @Injectable({
   providedIn: 'root'
@@ -23,11 +24,18 @@ export class MapService {
 
 
 
-  // Metido para validad si hay mapa o no
+  // Metodo para validar si hay mapa o no
   get isMapReady(){
     return !!this.map;
   }
 
+
+
+
+
+  // Defino las variables kms y dist
+  private dist: number = 0;
+  private time: number = 0;
 
 
 
@@ -123,7 +131,7 @@ export class MapService {
 
     // Metiante la propiedad fitBpunds a la propiedad map lo que hacemos es que se encuadre todos los resultados de la busqueda en la pantalla junto a la de mi ubicacion. Con el padding lo unico que hacemos es que los marcadores mas exteriores no queden a ras de la imagen
     this.map.fitBounds(bounds, {
-      padding: 100
+      padding: 200
     })
 
   }
@@ -159,6 +167,12 @@ export class MapService {
     console.log({kms: route.distance / 1000, duration: route.duration / 60});
 
 
+    this.dist = route.distance / 1000;
+    this.time = route.duration / 60;
+
+    this.infoNavigation();
+
+
     // todo: Para que toda la ruta sea el foco de la pantalla
 
 
@@ -178,7 +192,7 @@ export class MapService {
     });
 
     this.map.fitBounds(bounds, {
-      padding: 100
+      padding: 200
     })
 
 
@@ -228,6 +242,31 @@ export class MapService {
         'line-width': 3
       }
     });
+  }
+
+
+
+
+
+  // Metodo para rescatar la info de kms y dist
+  public infoNavigation():InfoNavigation | undefined {
+
+    const info = {
+      dist: this.dist,
+      time: this.time
+    }
+
+    return info;
+  }
+
+
+
+
+  public deleteInfoNavigation() {
+
+
+    this.dist = 0;
+    this.time = 0;
   }
 
 

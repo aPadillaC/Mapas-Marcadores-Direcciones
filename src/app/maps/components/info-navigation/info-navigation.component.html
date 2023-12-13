@@ -1,0 +1,6 @@
+<p
+  *ngIf="infoNavigation?.dist || infoNavigation?.time !== 0"
+  class="info-container"
+  >Distance: {{infoNavigation?.dist | number: '1.2-2'}} kms / Duration: {{infoNavigation?.time | number: '1.2-2'}} min</p>
+
+

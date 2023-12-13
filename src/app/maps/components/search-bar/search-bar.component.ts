@@ -12,7 +12,8 @@ export class SearchBarComponent {
   private debounceTimer?: NodeJS.Timeout;
 
   constructor (
-    private placesService: PlacesService
+    private placesService: PlacesService,
+    private mapService: MapService
   ) {  }
 
 
@@ -24,6 +25,7 @@ export class SearchBarComponent {
 
     this.debounceTimer = setTimeout(() => {
       this.placesService.getPlacesByQuery( query )
+      this.mapService.deleteInfoNavigation()
     }, 350)
 
   }

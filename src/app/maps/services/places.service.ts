@@ -51,6 +51,7 @@ export class PlacesService {
 
   // Método para realizar las peticiones http del buscador
   getPlacesByQuery( query: string = '') {
+
     // todo: evaluar cuando el query es nulo
     if ( query.length === 0 ) {
       this.places = [];
