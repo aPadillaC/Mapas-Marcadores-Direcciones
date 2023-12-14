@@ -164,6 +164,8 @@ export class MapService {
   // Método para obtener la dist y mtrs entre los dos puntos
   private drawPolyline( route: Route) {
 
+    this.deleteInfoNavigation();
+
     console.log({kms: route.distance / 1000, duration: route.duration / 60});
 
 

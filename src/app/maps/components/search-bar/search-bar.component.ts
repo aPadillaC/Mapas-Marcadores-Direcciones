@@ -25,7 +25,7 @@ export class SearchBarComponent {
 
     this.debounceTimer = setTimeout(() => {
       this.placesService.getPlacesByQuery( query )
-      this.mapService.deleteInfoNavigation()
+      // this.mapService.deleteInfoNavigation()
     }, 350)
 
   }
